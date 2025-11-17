@@ -4,136 +4,205 @@
 
 ---
 
-## Descripción
+## Descripción del Proyecto
 
-API REST completa para la gestión de ventas de autos desarrollada con **FastAPI**, **SQLModel** y **PostgreSQL**. El sistema permite administrar un inventario de autos y registrar las ventas realizadas, implementando todas las operaciones CRUD y aplicando patrones de diseño profesionales.
+Este proyecto implementa una **API REST completa** para la gestión de ventas de autos desarrollada con **FastAPI**, **SQLModel** y **PostgreSQL**. 
+
+La aplicación permite administrar un inventario de vehículos y registrar las ventas realizadas, implementando todas las operaciones CRUD (Create, Read, Update, Delete) para ambas entidades y aplicando patrones de diseño profesionales como el **Repository Pattern** y **Dependency Injection**.
 
 ---
 
-## Características
+## Autor
+
+**Desarrollado por:** [Tu Nombre]  
+**Materia:** Programación IV  
+**Universidad:** Universidad Tecnológica Nacional  
+**Año:** 2024
+
+---
+
+## Características Implementadas
 
 - ✅ **CRUD Completo**: Operaciones Create, Read, Update, Delete para Autos y Ventas
-- ✅ **Validaciones Robustas**: Validación de datos con Pydantic y reglas de negocio
-- ✅ **Patrón Repository**: Implementación del patrón Repository para acceso a datos
-- ✅ **Paginación**: Paginación en todos los endpoints de listado
+- ✅ **Validaciones Robustas**: Validación de datos con Pydantic y reglas de negocio personalizadas
+- ✅ **Patrón Repository**: Implementación completa del patrón Repository para acceso a datos
+- ✅ **Paginación**: Paginación implementada en todos los endpoints de listado
 - ✅ **Búsquedas Avanzadas**: Filtros por marca, modelo, precio, fecha, comprador
 - ✅ **Relaciones**: Gestión de relaciones uno-a-muchos entre Autos y Ventas
 - ✅ **Documentación Automática**: Documentación interactiva con Swagger UI y ReDoc
-- ✅ **Manejo de Errores**: Manejo apropiado de errores HTTP (400, 404, 422)
+- ✅ **Manejo de Errores**: Manejo apropiado de errores HTTP (400, 404, 422, 500)
 
 ---
 
 ## Tecnologías Utilizadas
 
-- **FastAPI**: Framework web moderno y rápido para construir APIs
-- **SQLModel**: ORM basado en SQLAlchemy y Pydantic
-- **PostgreSQL**: Base de datos relacional
+- **FastAPI**: Framework web moderno y rápido para construir APIs REST
+- **SQLModel**: ORM basado en SQLAlchemy y Pydantic para modelado de datos
+- **PostgreSQL**: Base de datos relacional robusta
 - **Pydantic**: Validación de datos y serialización
-- **Python 3.8+**: Lenguaje de programación
+- **Python 3.13**: Lenguaje de programación utilizado
 
 ---
 
-## Estructura del Proyecto
+## Arquitectura del Proyecto
+
+### Patrón de Diseño Implementado
+
+He implementado el **Patrón Repository** para separar la lógica de acceso a datos de la lógica de negocio. Esto permite:
+
+- **Separación de responsabilidades**: Los endpoints no acceden directamente a la base de datos
+- **Testabilidad**: Facilita la creación de tests unitarios con mocks
+- **Mantenibilidad**: Cambios en la capa de datos no afectan los endpoints
+- **Reutilización**: La lógica de acceso a datos puede reutilizarse
+
+### Estructura del Proyecto
 
 ```
 TrabajoFastAPI/
-├── main.py              # Aplicación FastAPI principal
-├── database.py          # Configuración de base de datos
-├── models.py            # Modelos SQLModel
-├── repository.py        # Patrón Repository para acceso a datos
-├── autos.py            # Router de endpoints para autos
-├── ventas.py           # Router de endpoints para ventas
-├── requirements.txt     # Dependencias Python
-└── README.md           # Documentación del proyecto
+├── main.py              # Aplicación FastAPI principal, configuración y endpoints generales
+├── database.py          # Configuración de conexión a PostgreSQL y gestión de sesiones
+├── models.py            # Modelos SQLModel (Auto, Venta) y esquemas Pydantic
+├── repository.py        # Implementación del patrón Repository (interfaces y clases concretas)
+├── autos.py            # Router con todos los endpoints relacionados con autos
+├── ventas.py           # Router con todos los endpoints relacionados con ventas
+├── requirements.txt     # Dependencias del proyecto con versiones específicas
+└── README.md           # Este archivo de documentación
 ```
+
+### Descripción de Archivos
+
+#### `main.py`
+- Configuración principal de la aplicación FastAPI
+- Registro de routers (`autos` y `ventas`)
+- Manejo global de excepciones (404, 500)
+- Endpoints generales (`/`, `/health`, `/stats`)
+- Configuración de CORS
+
+#### `models.py`
+- Define los modelos de datos usando SQLModel
+- Modelos base: `AutoBase`, `VentaBase`
+- Modelos de tabla: `Auto`, `Venta` (con relaciones)
+- Modelos para operaciones: `AutoCreate`, `AutoUpdate`, `VentaCreate`, `VentaUpdate`
+- Modelos de respuesta: `AutoResponse`, `VentaResponse`, etc.
+- Validadores personalizados con Pydantic
+
+#### `repository.py`
+- Interfaces abstractas: `AutoRepositoryInterface`, `VentaRepositoryInterface`
+- Implementaciones concretas: `AutoRepository`, `VentaRepository`
+- Factory Pattern para crear instancias de repositorios
+- Manejo de errores de base de datos
+
+#### `autos.py`
+- Router de FastAPI para endpoints de autos
+- Endpoints CRUD completos
+- Búsqueda por número de chasis
+- Búsqueda avanzada con filtros
+- Estadísticas de autos
+
+#### `ventas.py`
+- Router de FastAPI para endpoints de ventas
+- Endpoints CRUD completos
+- Búsqueda por auto y comprador
+- Búsqueda avanzada con filtros
+- Estadísticas y reportes de ventas
+
+#### `database.py`
+- Configuración de conexión a PostgreSQL
+- Gestión de sesiones con Dependency Injection
+- Creación automática de tablas
+- Utilidades para desarrollo y testing
 
 ---
 
-## Requisitos Previos
+## Cómo Funciona la Aplicación
 
-Antes de comenzar, asegúrate de tener instalado:
+### Flujo de una Petición
 
-1. **Python 3.8 o superior**
-   - Verificar versión: `python --version`
-   - Descargar desde: https://www.python.org/downloads/
+1. **Cliente** realiza una petición HTTP a un endpoint (ej: `POST /autos`)
+2. **FastAPI** recibe la petición y la enruta al router correspondiente (`autos.py`)
+3. **Endpoint** valida los datos usando los modelos Pydantic (`AutoCreate`)
+4. **Dependency Injection** proporciona una sesión de base de datos y un repositorio
+5. **Repository** ejecuta la lógica de acceso a datos (crear auto en la BD)
+6. **SQLModel** traduce las operaciones a SQL y las ejecuta en PostgreSQL
+7. **Respuesta** se serializa usando los modelos de respuesta (`AutoResponse`)
+8. **FastAPI** retorna la respuesta JSON al cliente
 
-2. **PostgreSQL**
-   - Windows: https://www.postgresql.org/download/windows/
-   - Linux: `sudo apt-get install postgresql postgresql-contrib`
-   - macOS: `brew install postgresql`
+### Relaciones entre Entidades
 
-3. **pip** (gestor de paquetes de Python)
+La aplicación implementa una relación **uno-a-muchos** entre `Auto` y `Venta`:
+
+- Un `Auto` puede tener múltiples `Venta`s
+- Una `Venta` pertenece a un único `Auto`
+- La relación se implementa mediante `foreign_key` en la tabla `venta`
+- SQLModel maneja automáticamente las relaciones mediante `Relationship`
+
+### Validaciones Implementadas
+
+#### Auto
+- **Año**: Debe estar entre 1900 y el año actual
+- **Número de chasis**: Debe ser único, alfanumérico y se normaliza a mayúsculas
+- **Marca y modelo**: No pueden estar vacíos, se normalizan con formato título
+
+#### Venta
+- **Precio**: Debe ser mayor a 0 y se redondea a 2 decimales
+- **Nombre comprador**: No puede estar vacío, se normaliza con formato título
+- **Fecha de venta**: No puede ser una fecha futura
+- **Auto ID**: Debe existir un auto con ese ID antes de crear la venta
 
 ---
 
-## Instalación
+## Instalación y Configuración
 
-### 1. Clonar o descargar el proyecto
+### Requisitos Previos
 
-```bash
-cd TrabajoFastAPI
-```
+- **Python 3.8 o superior** (probado con Python 3.13)
+- **PostgreSQL** instalado y corriendo
+- **pip** (gestor de paquetes de Python)
 
-### 2. Crear entorno virtual
+### Pasos de Instalación
 
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+1. **Clonar o descargar el proyecto**
+   ```bash
+   cd TrabajoFastAPI
+   ```
 
-# Linux/macOS
-python -m venv venv
-source venv/bin/activate
-```
+2. **Crear entorno virtual**
+   ```bash
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
+   
+   # Linux/macOS
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-### 3. Instalar dependencias
+3. **Instalar dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+4. **Configurar PostgreSQL**
+   
+   Crear la base de datos:
+   ```sql
+   CREATE DATABASE autos_db;
+   ```
+   
+   Configurar variables de entorno creando un archivo `.env`:
+   ```env
+   DATABASE_URL=postgresql://usuario:password@localhost:5432/autos_db
+   ENVIRONMENT=development
+   ```
+   
+   > **Nota**: Reemplazar `usuario` y `password` con las credenciales de PostgreSQL.
 
-### 4. Configurar PostgreSQL
-
-1. Crear la base de datos:
-```sql
-CREATE DATABASE autos_db;
-```
-
-2. Configurar variables de entorno:
-
-**Windows (PowerShell):**
-```powershell
-$env:DATABASE_URL="postgresql://usuario:password@localhost:5432/autos_db"
-$env:ENVIRONMENT="development"
-```
-
-**Windows (CMD):**
-```cmd
-set DATABASE_URL=postgresql://usuario:password@localhost:5432/autos_db
-set ENVIRONMENT=development
-```
-
-**Linux/macOS:**
-```bash
-export DATABASE_URL="postgresql://usuario:password@localhost:5432/autos_db"
-export ENVIRONMENT="development"
-```
-
-**O crear un archivo `.env`** (recomendado):
-```env
-DATABASE_URL=postgresql://usuario:password@localhost:5432/autos_db
-ENVIRONMENT=development
-```
-
-> **Nota**: Reemplaza `usuario` y `password` con tus credenciales de PostgreSQL.
-
-### 5. Inicializar la base de datos
-
-La aplicación creará automáticamente las tablas al iniciar. También puedes ejecutar:
-
-```bash
-python database.py init
-```
+5. **Inicializar la base de datos**
+   
+   La aplicación creará automáticamente las tablas al iniciar. También se puede ejecutar manualmente:
+   ```bash
+   python database.py init
+   ```
 
 ---
 
@@ -151,7 +220,7 @@ python main.py
 
 ### Verificar que la aplicación está corriendo
 
-Abre tu navegador y visita:
+Una vez iniciada, la aplicación estará disponible en:
 - **API Principal**: http://localhost:8000
 - **Documentación Swagger UI**: http://localhost:8000/docs
 - **Documentación ReDoc**: http://localhost:8000/redoc
@@ -171,8 +240,10 @@ Abre tu navegador y visita:
 | PUT | `/autos/{auto_id}` | Actualizar auto |
 | DELETE | `/autos/{auto_id}` | Eliminar auto |
 | GET | `/autos/chasis/{numero_chasis}` | Buscar por número de chasis |
-| GET | `/autos/{auto_id}/with-ventas` | Auto con sus ventas |
+| GET | `/autos/{auto_id}/with-ventas` | Obtener auto con sus ventas asociadas |
 | GET | `/autos/search/` | Búsqueda avanzada con filtros |
+| GET | `/autos/stats/summary` | Estadísticas de autos |
+| GET | `/autos/validate/chasis/{numero_chasis}` | Validar disponibilidad de chasis |
 
 ### Ventas (`/ventas`)
 
@@ -183,10 +254,14 @@ Abre tu navegador y visita:
 | GET | `/ventas/{venta_id}` | Obtener venta por ID |
 | PUT | `/ventas/{venta_id}` | Actualizar venta |
 | DELETE | `/ventas/{venta_id}` | Eliminar venta |
-| GET | `/ventas/auto/{auto_id}` | Ventas de un auto específico |
-| GET | `/ventas/comprador/{nombre}` | Ventas por nombre de comprador |
-| GET | `/ventas/{venta_id}/with-auto` | Venta con información del auto |
+| GET | `/ventas/auto/{auto_id}` | Obtener ventas de un auto específico |
+| GET | `/ventas/comprador/{nombre}` | Obtener ventas por nombre de comprador |
+| GET | `/ventas/{venta_id}/with-auto` | Obtener venta con información del auto |
 | GET | `/ventas/search/` | Búsqueda avanzada con filtros |
+| GET | `/ventas/stats/summary` | Estadísticas generales de ventas |
+| GET | `/ventas/stats/monthly` | Estadísticas mensuales |
+| GET | `/ventas/reports/top-buyers` | Mejores compradores |
+| GET | `/ventas/reports/recent` | Ventas recientes |
 
 ---
 
@@ -240,21 +315,6 @@ GET http://localhost:8000/ventas/search/?precio_min=20000&precio_max=30000
 
 ---
 
-## Validaciones Implementadas
-
-### Auto
-- ✅ Año entre 1900 y año actual
-- ✅ Número de chasis único y alfanumérico
-- ✅ Marca y modelo no vacíos
-
-### Venta
-- ✅ Precio mayor a 0
-- ✅ Nombre del comprador no vacío
-- ✅ Fecha de venta no futura
-- ✅ Auto debe existir antes de crear la venta
-
----
-
 ## Estructura de Datos
 
 ### Auto
@@ -299,32 +359,14 @@ python database.py info
 python database.py reset
 ```
 
-### Verificar Conexión a PostgreSQL
-
-```bash
-psql -h localhost -p 5432 -U usuario -d autos_db
-```
-
 ---
 
 ## Solución de Problemas
 
 ### Error de Conexión a Base de Datos
 
-1. Verificar que PostgreSQL esté corriendo:
-   ```bash
-   # Windows
-   services.msc (buscar PostgreSQL)
-   
-   # Linux
-   sudo systemctl status postgresql
-   
-   # macOS
-   brew services list
-   ```
-
-2. Verificar credenciales en `DATABASE_URL`
-
+1. Verificar que PostgreSQL esté corriendo
+2. Verificar credenciales en el archivo `.env`
 3. Verificar que la base de datos `autos_db` exista
 
 ### Error al Instalar Dependencias
@@ -333,16 +375,14 @@ psql -h localhost -p 5432 -U usuario -d autos_db
 # Actualizar pip
 python -m pip install --upgrade pip
 
-# Instalar dependencias una por una si es necesario
-pip install fastapi
-pip install sqlmodel
-pip install psycopg2-binary
+# Instalar dependencias
+pip install -r requirements.txt
 ```
 
 ### Puerto 8000 ya en uso
 
 ```bash
-# Cambiar el puerto
+# Cambiar el puerto en main.py o usar:
 uvicorn main:app --reload --port 8001
 ```
 
@@ -357,27 +397,18 @@ uvicorn main:app --reload --port 8001
 
 ---
 
-## Autor
+## Notas Técnicas
 
-Desarrollado para **Programación IV - Universidad Tecnológica Nacional**
+- La documentación interactiva está disponible automáticamente en `/docs` (Swagger UI) y `/redoc`
+- El endpoint `/health` permite verificar el estado de la aplicación y la conexión a la base de datos
+- El endpoint `/stats` proporciona estadísticas generales del sistema
+- Todas las respuestas están en formato JSON
+- Los errores siguen el formato estándar de FastAPI con códigos HTTP apropiados
+- La aplicación crea automáticamente las tablas en PostgreSQL al iniciar
+- Se utiliza Dependency Injection para gestionar sesiones de base de datos y repositorios
 
 ---
 
 ## Licencia
 
-Este proyecto es parte de un trabajo práctico académico.
-
----
-
-## Notas
-
-- La documentación interactiva está disponible en `/docs` (Swagger UI) y `/redoc`
-- El endpoint `/health` permite verificar el estado de la aplicación
-- El endpoint `/stats` proporciona estadísticas generales del sistema
-- Todas las respuestas están en formato JSON
-- Los errores siguen el formato estándar de FastAPI
-
----
-
-**¡Éxitos en el desarrollo!** 🚗💻
-
+Este proyecto es parte de un trabajo práctico académico para la materia Programación IV de la Universidad Tecnológica Nacional.
