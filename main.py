@@ -12,7 +12,6 @@ from ventas import router as ventas_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Maneja el ciclo de vida de la aplicación FastAPI"""
     print("Iniciando servidor FastAPI...")
     
     try:
@@ -98,7 +97,6 @@ app.include_router(ventas_router)
 
 @app.get("/", tags=["root"])
 async def root():
-    """Endpoint principal que retorna informacion basica de la API"""
     return {
         "mensaje": "API de Ventas de Autos",
         "version": "1.0.0",
@@ -122,7 +120,6 @@ async def root():
 
 @app.get("/health", tags=["health"])
 async def health_check():
-    """Verifica el estado de la aplicacion y conexion a base de datos"""
     try:
         conexion_ok = test_database_connection()
         config_db = get_database_info()
@@ -148,7 +145,6 @@ async def health_check():
 
 @app.get("/stats", tags=["statistics"])
 async def get_general_stats():
-    """Obtiene estadisticas generales del sistema"""
     try:
         from database import get_session
         from repository import get_auto_repository, get_venta_repository
@@ -190,7 +186,6 @@ async def get_general_stats():
 
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
-    """Maneja errores 404 de forma personalizada"""
     return JSONResponse(
         status_code=404,
         content={
@@ -204,7 +199,6 @@ async def not_found_handler(request, exc):
 
 @app.exception_handler(500)
 async def internal_error_handler(request, exc):
-    """Maneja errores 500 de forma personalizada"""
     return JSONResponse(
         status_code=500,
         content={
@@ -217,7 +211,6 @@ async def internal_error_handler(request, exc):
 
 
 def obtener_configuracion():
-    """Lee la configuracion de la aplicacion desde variables de entorno"""
     return {
         "host": os.getenv("HOST", "0.0.0.0"),
         "port": int(os.getenv("PORT", "8000")),

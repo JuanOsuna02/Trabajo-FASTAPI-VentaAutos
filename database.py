@@ -16,14 +16,12 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
 class DatabaseConfig:
-    """Maneja la configuracion de la base de datos"""
     
     def __init__(self):
         self.database_url = self._obtener_url()
         self.echo = self._obtener_echo()
         
     def _obtener_url(self) -> str:
-        """Lee la URL de la base de datos desde variables de entorno"""
         url = os.getenv(
             "DATABASE_URL", 
             "postgresql://postgres:password@localhost:5432/autos_db"
@@ -35,7 +33,6 @@ class DatabaseConfig:
         return url
     
     def _obtener_echo(self) -> bool:
-        """Determina si se debe mostrar el SQL en consola"""
         entorno = os.getenv("ENVIRONMENT", "development").lower()
         return entorno == "development"
 
@@ -53,7 +50,6 @@ motor_db: Engine = create_engine(
 
 
 def create_db_and_tables() -> None:
-    """Crea todas las tablas necesarias en la base de datos"""
     try:
         SQLModel.metadata.create_all(motor_db)
         print("[OK] Tablas creadas correctamente")
@@ -63,7 +59,6 @@ def create_db_and_tables() -> None:
 
 
 def drop_db_and_tables() -> None:
-    """Elimina todas las tablas de la base de datos"""
     try:
         SQLModel.metadata.drop_all(motor_db)
         print("[ADVERTENCIA] Todas las tablas han sido eliminadas")
@@ -73,7 +68,6 @@ def drop_db_and_tables() -> None:
 
 
 def test_database_connection() -> bool:
-    """Verifica la conexion a la base de datos"""
     try:
         with Session(motor_db) as db_session:
             db_session.exec(text("SELECT 1"))
@@ -85,7 +79,6 @@ def test_database_connection() -> bool:
 
 
 def get_session() -> Generator[Session, None, None]:
-    """Generador de sesiones para dependency injection en FastAPI"""
     with Session(motor_db) as db_session:
         try:
             yield db_session
@@ -98,7 +91,6 @@ def get_session() -> Generator[Session, None, None]:
 
 
 def reset_database() -> None:
-    """Reinicia completamente la base de datos eliminando y recreando tablas"""
     print("[ADVERTENCIA] Reiniciando base de datos...")
     drop_db_and_tables()
     create_db_and_tables()
@@ -106,7 +98,6 @@ def reset_database() -> None:
 
 
 def get_database_info() -> dict:
-    """Obtiene informacion sobre la configuracion de la base de datos"""
     url_segura = config.database_url
     if "@" in url_segura:
         partes = url_segura.split("://")
@@ -126,7 +117,6 @@ def get_database_info() -> dict:
 
 
 def initialize_database() -> None:
-    """Inicializa la base de datos al arrancar la aplicacion"""
     print("Inicializando base de datos...")
     
     if not test_database_connection():
@@ -143,22 +133,18 @@ def initialize_database() -> None:
 
 
 class DatabaseError(Exception):
-    """Excepcion base para errores de base de datos"""
     pass
 
 
 class ConnectionError(DatabaseError):
-    """Error de conexion a la base de datos"""
     pass
 
 
 class IntegrityError(DatabaseError):
-    """Error de integridad de datos"""
     pass
 
 
 def handle_database_error(error: Exception) -> DatabaseError:
-    """Convierte errores de SQLAlchemy en errores personalizados"""
     mensaje_error = str(error).lower()
     
     if "connection" in mensaje_error:

@@ -12,7 +12,6 @@ from models import (
 
 
 def obtener_repositorio_venta(db_session: Session = Depends(get_session)) -> VentaRepositoryInterface:
-    """Crea una instancia del repositorio de ventas"""
     return get_venta_repository(db_session)
 
 
@@ -29,7 +28,6 @@ async def crear_venta(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Registra una nueva venta en el sistema"""
     try:
         venta_creada = repo.create(nueva_venta)
         return VentaResponse.model_validate(venta_creada)
@@ -53,7 +51,6 @@ async def listar_ventas(
     skip: int = Query(0, ge=0, description="Registros a omitir"),
     limit: int = Query(10, ge=1, le=100, description="Maximo de registros a retornar")
 ):
-    """Lista todas las ventas con paginacion"""
     try:
         lista_ventas = repo.get_all(skip=skip, limit=limit)
         total_registros = repo.count_all()
@@ -78,7 +75,6 @@ async def obtener_venta(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Obtiene una venta especifica por su identificador"""
     try:
         venta = repo.get_by_id(venta_id)
         if not venta:
@@ -103,7 +99,6 @@ async def actualizar_venta(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Actualiza los datos de una venta existente"""
     try:
         venta_actualizada = repo.update(venta_id, datos_actualizacion)
         if not venta_actualizada:
@@ -133,7 +128,6 @@ async def eliminar_venta(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Elimina una venta del sistema"""
     try:
         eliminado = repo.delete(venta_id)
         if not eliminado:
@@ -156,7 +150,6 @@ async def obtener_ventas_por_auto(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Obtiene todas las ventas de un auto especifico"""
     try:
         ventas = repo.get_by_auto_id(auto_id)
         return [VentaResponse.model_validate(venta) for venta in ventas]
@@ -173,7 +166,6 @@ async def obtener_ventas_por_comprador(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Obtiene todas las ventas de un comprador especifico"""
     try:
         ventas = repo.get_by_comprador(nombre)
         return [VentaResponse.model_validate(venta) for venta in ventas]
@@ -190,7 +182,6 @@ async def obtener_venta_con_auto(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Obtiene una venta junto con la informacion del auto asociado"""
     try:
         venta = repo.get_with_auto(venta_id)
         if not venta:
@@ -221,7 +212,6 @@ async def buscar_ventas(
     skip: int = Query(0, ge=0, description="Registros a omitir"),
     limit: int = Query(10, ge=1, le=100, description="Maximo de registros")
 ):
-    """Busca ventas aplicando filtros avanzados"""
     try:
         if precio_min and precio_max and precio_min > precio_max:
             raise HTTPException(
@@ -269,7 +259,6 @@ async def obtener_estadisticas_ventas(
     db_session: Session = Depends(get_session),
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta)
 ):
-    """Genera estadisticas generales sobre las ventas"""
     try:
         estadisticas = repo.get_sales_statistics()
         return estadisticas
@@ -286,7 +275,6 @@ async def obtener_estadisticas_mensuales(
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta),
     año: Optional[int] = Query(None, ge=2000, le=2030, description="Año para filtrar")
 ):
-    """Obtiene estadisticas de ventas agrupadas por mes"""
     try:
         filtros = VentaSearchParams()
         if año:
@@ -331,7 +319,6 @@ async def obtener_mejores_compradores(
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta),
     limit: int = Query(10, ge=1, le=50, description="Numero de compradores a retornar")
 ):
-    """Obtiene los compradores que mas han gastado"""
     try:
         todas_las_ventas = repo.get_all(skip=0, limit=10000)
         
@@ -376,7 +363,6 @@ async def obtener_ventas_recientes(
     repo: VentaRepositoryInterface = Depends(obtener_repositorio_venta),
     days: int = Query(7, ge=1, le=365, description="Numero de dias hacia atras")
 ):
-    """Obtiene ventas recientes de los ultimos N dias"""
     try:
         fecha_limite = datetime.now() - timedelta(days=days)
         

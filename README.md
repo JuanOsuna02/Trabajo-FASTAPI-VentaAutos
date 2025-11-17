@@ -14,7 +14,8 @@ La aplicación permite administrar un inventario de vehículos y registrar las v
 
 ## Autor
 
-**Desarrollado por:** Juan Cruz Fernandez Osuna 
+**Desarrollado por:** Juan Cruz Fernandez Osuna
+ **Carrera:** Tecnico Universitario en Programacion
 **Materia:** Programación IV  
 **Universidad:** Universidad Tecnológica Nacional  
 **Año:** 2025

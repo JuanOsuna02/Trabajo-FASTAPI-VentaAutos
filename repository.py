@@ -11,106 +11,85 @@ from database import handle_database_error, IntegrityError
 
 
 class AutoRepositoryInterface(ABC):
-    """Interfaz abstracta para el repositorio de vehiculos"""
     
     @abstractmethod
     def create(self, auto: AutoCreate) -> Auto:
-        """Registra un nuevo vehiculo"""
         pass
     
     @abstractmethod
     def get_by_id(self, auto_id: int) -> Optional[Auto]:
-        """Obtiene un vehiculo por su identificador"""
         pass
     
     @abstractmethod
     def get_all(self, skip: int = 0, limit: int = 10) -> List[Auto]:
-        """Lista todos los vehiculos con paginacion"""
         pass
     
     @abstractmethod
     def update(self, auto_id: int, auto_update: AutoUpdate) -> Optional[Auto]:
-        """Actualiza los datos de un vehiculo"""
         pass
     
     @abstractmethod
     def delete(self, auto_id: int) -> bool:
-        """Elimina un vehiculo del sistema"""
         pass
     
     @abstractmethod
     def get_by_chasis(self, numero_chasis: str) -> Optional[Auto]:
-        """Busca un vehiculo por su numero de chasis"""
         pass
     
     @abstractmethod
     def search(self, params: AutoSearchParams, skip: int = 0, limit: int = 10) -> List[Auto]:
-        """Busca vehiculos aplicando filtros"""
         pass
     
     @abstractmethod
     def count_all(self) -> int:
-        """Cuenta el total de vehiculos registrados"""
         pass
 
 
 class VentaRepositoryInterface(ABC):
-    """Interfaz abstracta para el repositorio de ventas"""
     
     @abstractmethod
     def create(self, venta: VentaCreate) -> Venta:
-        """Registra una nueva venta"""
         pass
     
     @abstractmethod
     def get_by_id(self, venta_id: int) -> Optional[Venta]:
-        """Obtiene una venta por su identificador"""
         pass
     
     @abstractmethod
     def get_all(self, skip: int = 0, limit: int = 10) -> List[Venta]:
-        """Lista todas las ventas con paginacion"""
         pass
     
     @abstractmethod
     def update(self, venta_id: int, venta_update: VentaUpdate) -> Optional[Venta]:
-        """Actualiza los datos de una venta"""
         pass
     
     @abstractmethod
     def delete(self, venta_id: int) -> bool:
-        """Elimina una venta del sistema"""
         pass
     
     @abstractmethod
     def get_by_auto_id(self, auto_id: int) -> List[Venta]:
-        """Obtiene todas las ventas de un vehiculo"""
         pass
     
     @abstractmethod
     def get_by_comprador(self, nombre: str) -> List[Venta]:
-        """Obtiene todas las ventas de un comprador"""
         pass
     
     @abstractmethod
     def search(self, params: VentaSearchParams, skip: int = 0, limit: int = 10) -> List[Venta]:
-        """Busca ventas aplicando filtros"""
         pass
     
     @abstractmethod
     def count_all(self) -> int:
-        """Cuenta el total de ventas registradas"""
         pass
 
 
 class AutoRepository(AutoRepositoryInterface):
-    """Implementacion del repositorio de vehiculos"""
     
     def __init__(self, db_session: Session):
         self.db_session = db_session
     
     def create(self, nuevo_auto: AutoCreate) -> Auto:
-        """Registra un nuevo vehiculo en la base de datos"""
         try:
             vehiculo_existente = self.get_by_chasis(nuevo_auto.numero_chasis)
             if vehiculo_existente:
@@ -130,7 +109,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def get_by_id(self, auto_id: int) -> Optional[Auto]:
-        """Obtiene un vehiculo por su identificador"""
         try:
             consulta = select(Auto).where(Auto.id == auto_id)
             return self.db_session.exec(consulta).first()
@@ -138,7 +116,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def get_all(self, skip: int = 0, limit: int = 10) -> List[Auto]:
-        """Lista todos los vehiculos con paginacion"""
         try:
             consulta = select(Auto).offset(skip).limit(limit).order_by(Auto.id)
             return list(self.db_session.exec(consulta).all())
@@ -146,7 +123,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def update(self, auto_id: int, datos_actualizacion: AutoUpdate) -> Optional[Auto]:
-        """Actualiza los datos de un vehiculo existente"""
         try:
             vehiculo = self.get_by_id(auto_id)
             if not vehiculo:
@@ -174,7 +150,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def delete(self, auto_id: int) -> bool:
-        """Elimina un vehiculo de la base de datos"""
         try:
             vehiculo = self.get_by_id(auto_id)
             if not vehiculo:
@@ -199,7 +174,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def get_by_chasis(self, numero_chasis: str) -> Optional[Auto]:
-        """Busca un vehiculo por su numero de chasis"""
         try:
             consulta = select(Auto).where(Auto.numero_chasis == numero_chasis.upper())
             return self.db_session.exec(consulta).first()
@@ -207,7 +181,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def search(self, filtros: AutoSearchParams, skip: int = 0, limit: int = 10) -> List[Auto]:
-        """Busca vehiculos aplicando filtros especificos"""
         try:
             consulta = select(Auto)
             condiciones = []
@@ -235,7 +208,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def count_all(self) -> int:
-        """Cuenta el total de vehiculos registrados"""
         try:
             consulta = select(func.count(Auto.id))
             return self.db_session.exec(consulta).first() or 0
@@ -243,7 +215,6 @@ class AutoRepository(AutoRepositoryInterface):
             raise handle_database_error(error)
     
     def get_with_ventas(self, auto_id: int) -> Optional[Auto]:
-        """Obtiene un vehiculo junto con todas sus ventas"""
         try:
             consulta = select(Auto).where(Auto.id == auto_id)
             vehiculo = self.db_session.exec(consulta).first()
@@ -256,13 +227,11 @@ class AutoRepository(AutoRepositoryInterface):
 
 
 class VentaRepository(VentaRepositoryInterface):
-    """Implementacion del repositorio de ventas"""
     
     def __init__(self, db_session: Session):
         self.db_session = db_session
     
     def create(self, nueva_venta: VentaCreate) -> Venta:
-        """Registra una nueva venta en la base de datos"""
         try:
             consulta_auto = select(Auto).where(Auto.id == nueva_venta.auto_id)
             vehiculo = self.db_session.exec(consulta_auto).first()
@@ -283,7 +252,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_by_id(self, venta_id: int) -> Optional[Venta]:
-        """Obtiene una venta por su identificador"""
         try:
             consulta = select(Venta).where(Venta.id == venta_id)
             return self.db_session.exec(consulta).first()
@@ -291,7 +259,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_all(self, skip: int = 0, limit: int = 10) -> List[Venta]:
-        """Lista todas las ventas con paginacion"""
         try:
             consulta = select(Venta).offset(skip).limit(limit).order_by(Venta.fecha_venta.desc())
             return list(self.db_session.exec(consulta).all())
@@ -299,7 +266,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def update(self, venta_id: int, datos_actualizacion: VentaUpdate) -> Optional[Venta]:
-        """Actualiza los datos de una venta existente"""
         try:
             venta = self.get_by_id(venta_id)
             if not venta:
@@ -328,7 +294,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def delete(self, venta_id: int) -> bool:
-        """Elimina una venta de la base de datos"""
         try:
             venta = self.get_by_id(venta_id)
             if not venta:
@@ -346,7 +311,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_by_auto_id(self, auto_id: int) -> List[Venta]:
-        """Obtiene todas las ventas de un vehiculo especifico"""
         try:
             consulta = select(Venta).where(Venta.auto_id == auto_id).order_by(Venta.fecha_venta.desc())
             return list(self.db_session.exec(consulta).all())
@@ -354,7 +318,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_by_comprador(self, nombre: str) -> List[Venta]:
-        """Obtiene todas las ventas de un comprador especifico"""
         try:
             consulta = select(Venta).where(
                 Venta.nombre_comprador.ilike(f"%{nombre}%")
@@ -364,7 +327,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def search(self, filtros: VentaSearchParams, skip: int = 0, limit: int = 10) -> List[Venta]:
-        """Busca ventas aplicando filtros especificos"""
         try:
             consulta = select(Venta)
             condiciones = []
@@ -398,7 +360,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def count_all(self) -> int:
-        """Cuenta el total de ventas registradas"""
         try:
             consulta = select(func.count(Venta.id))
             return self.db_session.exec(consulta).first() or 0
@@ -406,7 +367,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_with_auto(self, venta_id: int) -> Optional[Venta]:
-        """Obtiene una venta junto con la informacion del vehiculo asociado"""
         try:
             consulta = select(Venta).where(Venta.id == venta_id)
             venta = self.db_session.exec(consulta).first()
@@ -418,7 +378,6 @@ class VentaRepository(VentaRepositoryInterface):
             raise handle_database_error(error)
     
     def get_sales_statistics(self) -> dict:
-        """Genera estadisticas generales sobre las ventas"""
         try:
             total_ventas = self.count_all()
             
@@ -451,24 +410,19 @@ class VentaRepository(VentaRepositoryInterface):
 
 
 class RepositoryFactory:
-    """Factory para crear instancias de repositorios"""
     
     @staticmethod
     def create_auto_repository(db_session: Session) -> AutoRepositoryInterface:
-        """Crea una instancia del repositorio de vehiculos"""
         return AutoRepository(db_session)
     
     @staticmethod
     def create_venta_repository(db_session: Session) -> VentaRepositoryInterface:
-        """Crea una instancia del repositorio de ventas"""
         return VentaRepository(db_session)
 
 
 def get_auto_repository(db_session: Session):
-    """Funcion helper para dependency injection del repositorio de vehiculos"""
     return RepositoryFactory.create_auto_repository(db_session)
 
 
 def get_venta_repository(db_session: Session):
-    """Funcion helper para dependency injection del repositorio de ventas"""
     return RepositoryFactory.create_venta_repository(db_session)

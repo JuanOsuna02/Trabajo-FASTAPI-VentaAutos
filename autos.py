@@ -12,7 +12,6 @@ from models import (
 
 
 def obtener_repositorio_auto(db_session: Session = Depends(get_session)) -> AutoRepositoryInterface:
-    """Crea una instancia del repositorio de autos"""
     return get_auto_repository(db_session)
 
 
@@ -29,7 +28,6 @@ async def crear_auto(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Crea un nuevo vehiculo en el inventario"""
     try:
         vehiculo_creado = repo.create(nuevo_auto)
         return AutoResponse.model_validate(vehiculo_creado)
@@ -53,7 +51,6 @@ async def listar_autos(
     skip: int = Query(0, ge=0, description="Registros a omitir"),
     limit: int = Query(10, ge=1, le=100, description="Maximo de registros a retornar")
 ):
-    """Lista todos los autos con paginacion"""
     try:
         lista_autos = repo.get_all(skip=skip, limit=limit)
         total_registros = repo.count_all()
@@ -78,7 +75,6 @@ async def obtener_auto(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Obtiene un auto especifico por su identificador"""
     try:
         vehiculo = repo.get_by_id(auto_id)
         if not vehiculo:
@@ -103,7 +99,6 @@ async def actualizar_auto(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Actualiza los datos de un auto existente"""
     try:
         vehiculo_actualizado = repo.update(auto_id, datos_actualizacion)
         if not vehiculo_actualizado:
@@ -133,7 +128,6 @@ async def eliminar_auto(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Elimina un auto del inventario"""
     try:
         eliminado = repo.delete(auto_id)
         if not eliminado:
@@ -162,7 +156,6 @@ async def buscar_por_chasis(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Busca un auto por su numero de chasis"""
     try:
         vehiculo = repo.get_by_chasis(numero_chasis)
         if not vehiculo:
@@ -186,7 +179,6 @@ async def obtener_auto_con_ventas(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Obtiene un auto junto con todas sus ventas asociadas"""
     try:
         vehiculo = repo.get_with_ventas(auto_id)
         if not vehiculo:
@@ -215,7 +207,6 @@ async def buscar_autos(
     skip: int = Query(0, ge=0, description="Registros a omitir"),
     limit: int = Query(10, ge=1, le=100, description="Maximo de registros")
 ):
-    """Busca autos aplicando filtros avanzados"""
     try:
         filtros = AutoSearchParams(
             marca=marca,
@@ -247,7 +238,6 @@ async def obtener_estadisticas_autos(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Genera estadisticas generales sobre los autos registrados"""
     try:
         total = repo.count_all()
         todos_los_autos = repo.get_all(skip=0, limit=1000)
@@ -290,7 +280,6 @@ async def validar_chasis_disponible(
     db_session: Session = Depends(get_session),
     repo: AutoRepositoryInterface = Depends(obtener_repositorio_auto)
 ):
-    """Verifica si un numero de chasis esta disponible"""
     try:
         auto_existente = repo.get_by_chasis(numero_chasis)
         
