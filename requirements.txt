@@ -1,0 +1,69 @@
+# ==================== FRAMEWORK WEB ====================
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+
+# ==================== BASE DE DATOS Y ORM ====================
+sqlmodel>=0.0.22
+psycopg2-binary>=2.9.10
+alembic>=1.13.0
+
+# ==================== VALIDACIÓN Y SERIALIZACIÓN ====================
+pydantic>=2.9.0
+pydantic-settings>=2.5.0
+
+# ==================== UTILIDADES DE DESARROLLO ====================
+python-multipart>=0.0.12
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# ==================== VARIABLES DE ENTORNO ====================
+python-dotenv>=1.0.1
+
+# ==================== TESTING (OPCIONAL) ====================
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+httpx>=0.27.0
+
+# ==================== LOGGING Y MONITOREO ====================
+structlog>=24.4.0
+
+# ==================== DOCUMENTACIÓN ====================
+# FastAPI ya incluye Swagger UI y ReDoc automáticamente
+
+# ==================== DEPENDENCIAS DE SISTEMA ====================
+# Estas dependencias son necesarias para el funcionamiento completo:
+#
+# PostgreSQL:
+#   - Windows: Descargar desde https://www.postgresql.org/download/windows/
+#   - Linux: sudo apt-get install postgresql postgresql-contrib
+#   - macOS: brew install postgresql
+#
+# Python 3.8+:
+#   - Requerido para FastAPI y SQLModel
+#
+# ==================== NOTAS DE INSTALACIÓN ====================
+#
+# 1. Crear entorno virtual:
+#    python -m venv venv
+#    
+# 2. Activar entorno virtual:
+#    Windows: venv\Scripts\activate
+#    Linux/macOS: source venv/bin/activate
+#    
+# 3. Instalar dependencias:
+#    pip install -r requirements.txt
+#    
+# 4. Configurar variables de entorno:
+#    DATABASE_URL=postgresql://usuario:password@localhost:5432/autos_db
+#    ENVIRONMENT=development
+#    
+# 5. Ejecutar aplicación:
+#    uvicorn main:app --reload
+#
+# ==================== VERSIONES ESPECÍFICAS ====================
+# 
+# Las versiones están fijadas para garantizar compatibilidad.
+# Para actualizar a versiones más recientes, verificar compatibilidad
+# entre FastAPI, SQLModel y Pydantic.
+#
+# Última actualización: Noviembre 2024
