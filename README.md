@@ -14,10 +14,10 @@ La aplicación permite administrar un inventario de vehículos y registrar las v
 
 ## Autor
 
-**Desarrollado por:** [Tu Nombre]  
+**Desarrollado por:** Juan Cruz Fernandez Osuna 
 **Materia:** Programación IV  
 **Universidad:** Universidad Tecnológica Nacional  
-**Año:** 2024
+**Año:** 2025
 
 ---
 
@@ -411,4 +411,4 @@ uvicorn main:app --reload --port 8001
 
 ## Licencia
 
-Este proyecto es parte de un trabajo práctico académico para la materia Programación IV de la Universidad Tecnológica Nacional.
+Este proyecto es parte de un trabajo práctico para materia Programación IV con el fin de obtener la regularidad de la materia.
